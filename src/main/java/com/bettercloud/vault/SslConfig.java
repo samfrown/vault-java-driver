@@ -9,6 +9,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -48,6 +49,7 @@ public class SslConfig implements Serializable {
 
     @Getter private boolean verify;
     @Getter private transient SSLContext sslContext;
+    @Getter private transient SSLSocketFactory sslSocketFactory;
     private transient KeyStore trustStore;
     private transient KeyStore keyStore;
     private String keyStorePassword;
@@ -479,8 +481,10 @@ public class SslConfig implements Serializable {
         if (verify == true) {
             if (keyStore != null || trustStore != null) {
                 this.sslContext = buildSslContextFromJks();
+                this.sslSocketFactory = sslContext.getSocketFactory();
             } else if (pemUTF8 != null || clientPemUTF8 != null || clientKeyPemUTF8 != null) {
                 this.sslContext = buildSslContextFromPem();
+                this.sslSocketFactory = sslContext.getSocketFactory();
             }
         }
     }
